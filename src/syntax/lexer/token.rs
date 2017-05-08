@@ -1,5 +1,6 @@
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
+    Block(Vec<Token>),
     IntLiteral,
     FloatLiteral,
     StringLiteral,
