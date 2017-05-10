@@ -1,32 +1,49 @@
-mod syntax;
+mod language;
+
+use language::syntax;
+use language::vm;
 
 use syntax::lexer;
-use lexer::block_tree;
-use lexer::process_branch;
+use syntax::parser;
+
+use lexer::lexer;
+use parser::{Traveler, Parser};
 
 fn main() {
     let data = r#"
-le a = r"hey\n"
+a := r"yes hello"
+c := '\n'
 
-le hex = 0xfff
-le bin = 0b101010
+let foo = "an expected thing"
 
-le f = .123
-le g = yes
+let h = 0xABCDE1
+let b = 0b101010
 
-g = nah
-
-func add: a, b
-    le r = a + b
-    pass r
-
-add(10, 10)
+func fib: a
+  if a < 3
+    pass a
+  else
+    pass fib(a - 1) + fib(a - 2)
     "#;
 
-    let mut tree = block_tree::BlockTree::new(&data, 0);
-    let indents  = tree.collect_indents();
-    
-    let processed_tree = process_branch(&tree.tree(&indents));
+    let mut working = r#"
+123.2
+.123
+r"hey\n"
+"hey\n"
+yes
+nah
+'c'
+"real string"
+1 + 10 * 10.2 - .2
+    "#.chars();
 
-    println!("{:#?}", processed_tree);
+    let lexer = lexer(&mut working);
+
+    let traveler = Traveler::new(lexer.collect());
+    let mut parser = Parser::new(traveler);
+
+    for e in parser.parse().iter() {
+        println!("{:#?}", e)
+    }
 }

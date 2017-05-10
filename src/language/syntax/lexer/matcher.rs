@@ -196,7 +196,7 @@ impl Matcher for IdentifierMatcher {
         }
         while !tokenizer.end() {
             let current = *tokenizer.peek().unwrap();
-            if !current.is_whitespace() && ("_?".contains(current) || current.is_alphanumeric()) {
+            if !current.is_whitespace() && ("_?!".contains(current) || current.is_alphanumeric()) {
                 identifier.push(tokenizer.next().unwrap());
             } else {
                 break;
