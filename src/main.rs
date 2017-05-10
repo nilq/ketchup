@@ -11,19 +11,12 @@ use parser::{Traveler, Parser};
 
 fn main() {
     let data = r#"
-a := r"yes hello"
-c := '\n'
+imm a = r"raw string\n"
 
-let foo = "an expected thing"
-
-let h = 0xABCDE1
-let b = 0b101010
-
-func fib: a
+fun fib(a)
   if a < 3
-    pass a
-  else
-    pass fib(a - 1) + fib(a - 2)
+    return a
+  return fib(a - 1) + fib(a - 2)
     "#;
 
     let mut working = r#"

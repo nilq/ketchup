@@ -41,35 +41,46 @@ impl Branch {
 pub struct BlockTree<'a> {
     source: &'a str,
     current_line: usize,
+    method: Option<char>,
 }
 
 #[allow(dead_code)]
 impl<'a> BlockTree<'a> {
     pub fn new(source: &str, current_line: usize) -> BlockTree {
         BlockTree {
-            source:       source,
-            current_line: current_line,
+            source,
+            current_line,
+            method: None,
         }
     }
 
-    pub fn collect_indents(&self) -> Vec<(usize, &'a str)> {
+    pub fn collect_indents(&mut self) -> Vec<(usize, &'a str)> {
         let mut indents = Vec::new();
         let mut lines   = self.source.lines();
         while let Some(line) = lines.next() {
-            if line.trim().len() > 0 {
-                indents.push((self.indent(&line), line.trim()))
-            } 
+            let parts: Vec<&str> = line.split("#").collect();
+            let ln = parts.get(0).unwrap().trim();
+
+            if ln.len() > 0 {
+                let indent = self.indent(&line);
+                indents.push((indent, ln))
+            }
         }
         indents
     }
 
-    pub fn indent(&self, line: &str) -> usize {
+    pub fn indent(&mut self, line: &str) -> usize {
         let mut pos: usize = 0;
         for c in line.chars() {
-            if c == ' ' {
-                pos += 1
-            } else {
-                break
+            match c {
+                ' ' | '\t' => {
+                    match self.method {
+                        Some(m) => assert!(m == c, "inconsistent indentation detected!?!"),
+                        None => self.method = Some(c),
+                    }
+                    pos += 1
+                }
+                _ => break,
             }
         }
         pos
