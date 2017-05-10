@@ -28,7 +28,6 @@ pub fn lexer(data: &mut Chars) -> Lexer {
         "-",
         "*",
         "/",
-        ":=",
         "=",
         "==",
         "<",
@@ -38,17 +37,18 @@ pub fn lexer(data: &mut Chars) -> Lexer {
     ].iter().map(|&x| x.to_string()).collect();
 
     let keywords = vec![
-        "fun",
+        "func",
         "or",
         "nor",
+        "le",
         "and",
         "if",
         "else",
     ].iter().map(|&x| x.to_string()).collect();
 
     let boolean = vec![
-        "tru",
-        "fal",
+        "yes",
+        "nah",
     ].iter().map(|&x| x.to_string()).collect();
 
     let matcher_symbol         = ConstantMatcher::new(TokenType::Symbol, symbols);

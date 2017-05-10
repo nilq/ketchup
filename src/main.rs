@@ -6,16 +6,21 @@ use lexer::process_branch;
 
 fn main() {
     let data = r#"
-a := r"hey\n"
+le a = r"hey\n"
 
-hex := 0xfff
-bin := 0b101010
+le hex = 0xfff
+le bin = 0b101010
 
-f := .123
-g := tru or fal
+le f = .123
+le g = yes
 
-fun add(a, b)
-    a + b
+g = nah
+
+func add: a, b
+    le r = a + b
+    pass r
+
+add(10, 10)
     "#;
 
     let mut tree = block_tree::BlockTree::new(&data, 0);

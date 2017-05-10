@@ -1,2 +1,2 @@
-# uni
-a simple interpreter
+# morgenfis
+a declicious programming language
