@@ -96,9 +96,9 @@ impl Parser {
                     let left = ex_stack.pop().unwrap();
                     let right = ex_stack.pop().unwrap();
 
-                    ex_stack.push(Expression::Operation(Box::new(right),
+                    ex_stack.push(Expression::Operation(Box::new(left),
                                                         op_stack.pop().unwrap().0,
-                                                        Box::new(left)));
+                                                        Box::new(right)));
 
                     self.traveler.next();
 
@@ -117,9 +117,9 @@ impl Parser {
             let left = ex_stack.pop().unwrap();
             let right = ex_stack.pop().unwrap();
 
-            ex_stack.push(Expression::Operation(Box::new(right),
+            ex_stack.push(Expression::Operation(Box::new(left),
                                                 op_stack.pop().unwrap().0,
-                                                Box::new(left)));
+                                                Box::new(right)));
         }
 
         ex_stack.pop().unwrap()

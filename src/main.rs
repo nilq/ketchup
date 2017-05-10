@@ -2,12 +2,17 @@ mod language;
 
 use language::syntax;
 use language::vm;
+use language::compiler;
 
 use syntax::lexer;
 use syntax::parser;
 
 use lexer::lexer;
 use parser::{Traveler, Parser};
+
+use vm::Machine;
+
+use std::collections::HashMap;
 
 fn main() {
     let data = r#"
@@ -20,14 +25,6 @@ fun fib(a)
     "#;
 
     let mut working = r#"
-123.2
-.123
-r"hey\n"
-"hey\n"
-yes
-nah
-'c'
-"real string"
 1 + 10 * 10.2 - .2
     "#.chars();
 
@@ -36,7 +33,13 @@ nah
     let traveler = Traveler::new(lexer.collect());
     let mut parser = Parser::new(traveler);
 
-    for e in parser.parse().iter() {
-        println!("{:#?}", e)
-    }
+    let mut scopes = HashMap::new();
+
+    let stack = compiler::statements(parser.parse());
+
+    println!("ops =>\n{:#?}\n", stack);
+
+    let mut vm = Machine::new(stack);
+
+    println!("executed =>\n{:#?}", vm.run(&mut scopes))
 }

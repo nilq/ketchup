@@ -69,6 +69,8 @@ impl Machine {
                 Op::Return => self.running = false,
                 _ => panic!("angery not covered!?!"),
             }
+
+            self.pointer += 1
         }
 
         self.running = false;

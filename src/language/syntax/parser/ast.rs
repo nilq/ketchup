@@ -19,11 +19,12 @@ pub enum Operand {
     Div,
     Plus,
     Minus,
-    Equal,
+    Equals,
+    NEquals,
     Lt,
-    LtEqual,
     Gt,
-    GtEqual,
+    LtEquals,
+    GtEquals,
 }
 
 pub fn operand(v: &str) -> Option<(Operand, u8)> {
@@ -32,11 +33,12 @@ pub fn operand(v: &str) -> Option<(Operand, u8)> {
         "/"  => Some((Operand::Div, 1)),
         "+"  => Some((Operand::Plus, 2)),
         "-"  => Some((Operand::Minus, 2)),
-        "==" => Some((Operand::Equal, 3)),
+        "==" => Some((Operand::Equals, 3)),
+        "!=" => Some((Operand::NEquals, 3)),
         "<"  => Some((Operand::Lt, 4)),
         ">"  => Some((Operand::Gt, 4)),
-        "<=" => Some((Operand::LtEqual, 4)),
-        ">=" => Some((Operand::GtEqual, 4)),
+        "<=" => Some((Operand::LtEquals, 4)),
+        ">=" => Some((Operand::GtEquals, 4)),
         _ => None,
     }
 }

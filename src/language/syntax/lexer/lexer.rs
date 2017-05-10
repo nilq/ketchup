@@ -78,7 +78,6 @@ pub fn lexer(data: &mut Chars) -> Lexer {
     lexer
 }
 
-
 pub fn lex_branch(branch: &Branch) -> Branch {
     let mut lexed_branch = Branch::new(Vec::new());
     for c in branch.value.iter() {
