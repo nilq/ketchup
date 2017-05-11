@@ -1,7 +1,55 @@
 pub mod syntax;
+
+#[macro_use]
 pub mod vm;
 
 pub use vm::Value;
+
+pub mod natives {
+    use std::collections::HashMap;
+    
+    use vm::{Op, Value, Object, Native};
+
+    pub fn apply(scope: &mut HashMap<String, Value>) {
+        native!("putsln", putsln, scope);
+        native!("puts", puts, scope);
+        native!("angry", angry, scope);
+    }
+
+    fn putsln(args: Vec<Value>) -> Value {
+        let s : Vec<String> = args.iter().map(
+            |ref v| format!("{}", v)
+        ).collect();
+
+        let joined = s.join(" ");
+
+        println!("{}", joined);
+
+        Value::StringLiteral(joined)
+    }
+
+    fn puts(args: Vec<Value>) -> Value {
+        let s : Vec<String> = args.iter().map(
+            |ref v| format!("{}", v)
+        ).collect();
+
+        let joined = s.join(" ");
+
+        print!("{}", joined);
+
+        Value::StringLiteral(joined)
+    }
+
+    fn angry(args: Vec<Value>) -> Value {
+        let s : Vec<String> = args.iter().map(
+            |ref v| format!("{}", v)
+        ).collect();
+
+        panic!(s.join(" "));
+
+        Value::Nil
+    }
+}
 
 pub mod compiler {
     use vm::{Op, Value};
@@ -27,6 +75,14 @@ pub mod compiler {
                 }
             },
             Expression::Identifier(ref n) => script.push(Op::Name(n.clone())),
+            Expression::Call(ref args)    => {
+                for a in &**args {
+                    expression(script, &a)
+                }
+
+                script.push(Op::Value(Value::IntLiteral((args.len() as i64) - 1)));
+                script.push(Op::Call)
+            }
             _ => panic!("unimplemented expression!") ,
         }
     }
@@ -43,9 +99,9 @@ pub mod compiler {
 
         for s in stream {
             match s {
-                Statement::Expression(e)   => expression(&mut script, &e),
-                Statement::Block(ve)       => script.append(&mut statements(*ve)),
-                Statement::Immutable(n, e) => assignment(&mut script, &n, &*e),
+                Statement::Expression(e)    => expression(&mut script, &e),
+                Statement::Block(ve)        => script.append(&mut statements(*ve)),
+                Statement::Definition(n, e) => assignment(&mut script, &n, &*e),
                 _ => panic!("unstable/unimplemented statement!?")
             }
         }

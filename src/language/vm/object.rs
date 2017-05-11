@@ -15,7 +15,7 @@ pub enum Object {
 }
 
 #[macro_export]
-macro_rules! add_native {
+macro_rules! native {
     ($name: expr, $func: ident, $scope: ident) => {
         $scope.insert($name.to_string(), Value::Object(Object::Native(Native::Function($func))));
     };

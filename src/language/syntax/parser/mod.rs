@@ -49,9 +49,7 @@ impl Parser {
 
                     let expr = self.expression();
 
-                    println!("var {} = {:?}", id, expr);
-
-                    Statement::Immutable(id, Box::new(expr))
+                    Statement::Definition(id, Box::new(expr))
                 },
 
                 k => panic!("very non-existent keyword: {}", k),
@@ -80,10 +78,46 @@ impl Parser {
             TokenType::BoolLiteral   => Expression::Atom(Value::BoolLiteral(self.traveler.current_content() == "yes")),
             TokenType::StringLiteral => Expression::Atom(Value::StringLiteral(self.traveler.current_content().clone())),
             TokenType::CharLiteral   => Expression::Atom(Value::CharLiteral(self.traveler.current_content().chars().nth(0).unwrap().clone())),
-            TokenType::Identifier    => Expression::Identifier(self.traveler.current_content()),
+            TokenType::Identifier    => {
+                let expr = Expression::Identifier(self.traveler.current_content());
+                
+                if self.traveler.next() {
+                    match self.traveler.current().token_type {
+                        TokenType::Operator => return self.operation(expr),
+                        TokenType::Symbol   => match self.traveler.current_content().as_str() {
+                            "(" => return self.call(expr),
+                            "~" => return Expression::Call(Box::new(vec!(expr))),
+                            ")" => (),
+                            s   => panic!("unexpected symbol: {}", s),
+                        },
+                        _ => (),
+                    }
+                }
 
+                self.traveler.prev();
+
+                expr
+            },
             _ => panic!("very unexpected: '{}'", self.traveler.current_content()),
         }
+    }
+
+    fn call(&mut self, expr: Expression) -> Expression {
+        self.traveler.next();
+
+        let mut stack = vec!(expr);
+
+        while self.traveler.current_content() != ")" {
+            stack.push(self.expression());
+
+            self.traveler.next();
+
+            if self.traveler.current_content() == "," {
+                self.traveler.next();
+            }
+        }
+
+        Expression::Call(Box::new(stack))
     }
 
     fn operation(&mut self, expression: Expression) -> Expression {

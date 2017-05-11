@@ -5,13 +5,13 @@ pub enum Expression {
     Atom(Value),
     Identifier(String),
     Operation(Box<Expression>, Operand, Box<Expression>),
+    Call(Box<Vec<Expression>>),
 }
 
 #[derive(Debug)]
 pub enum Statement {
     Block(Box<Vec<Statement>>),
-    Immutable(String, Box<Expression>),
-    Mutable(String, Box<Expression>),
+    Definition(String, Box<Expression>),
     Expression(Box<Expression>),
 }
 

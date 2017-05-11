@@ -2,11 +2,13 @@ use std::collections::HashMap;
 
 pub mod value;
 pub mod op;
+
+#[macro_use]
 pub mod object;
 
 pub use self::value::Value;
 pub use self::op::Op;
-pub use self::object::{Object, Native};
+pub use self::object::*;
 
 macro_rules! binary_op {
     ($vm_ref:expr, $a:ident, $b:ident, $r:expr) => {
@@ -86,8 +88,9 @@ impl Machine {
                     let mut values = Vec::new();
 
                     for _ in 0 .. len {
-                        values.push(self.stack.pop().unwrap());
+                        values.push(self.stack.pop().unwrap())
                     }
+
 
                     match self.stack.pop().unwrap() {
                         Value::Object(o) => {
@@ -117,7 +120,10 @@ impl Machine {
                                 },
                             }
                         },
-                        _ => return Err("very invalid and broken call!".to_owned()),
+                        s => {
+                            println!("found '{}' on stack", s);
+                            return Err("very invalid and broken call!".to_owned());
+                        },
                     }
                 },
                 _ => panic!("angery, not covered!?!"),

@@ -1,6 +1,7 @@
 use vm::Object;
 
 use std::cmp::Ordering;
+use std::fmt;
 
 #[derive(Debug, Clone)]
 pub enum Value {
@@ -71,6 +72,20 @@ impl Value {
             Value::CharLiteral(_)       => true,
             Value::Object(_)            => true,
             Value::Nil            => false,
+        }
+    }
+}
+
+impl fmt::Display for Value {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Value::IntLiteral(ref v)    => write!(f, "{}", v),
+            Value::FloatLiteral(ref v)  => write!(f, "{}", v),
+            Value::BoolLiteral(ref b)   => write!(f, "{}", b),
+            Value::StringLiteral(ref s) => write!(f, "{}", s),
+            Value::CharLiteral(ref c)   => write!(f, "{}", c),
+            Value::Object(_)            => write!(f, "[object]"),
+            Value::Nil                  => write!(f, "nil"),
         }
     }
 }

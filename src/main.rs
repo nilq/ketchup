@@ -3,6 +3,7 @@ mod language;
 use language::syntax;
 use language::vm;
 use language::compiler;
+use language::natives;
 
 use syntax::lexer;
 use syntax::parser;
@@ -12,35 +13,49 @@ use parser::{Traveler, Parser};
 
 use vm::Machine;
 
+use std::io;
+use std::io::prelude::*;
+
 use std::collections::HashMap;
 
-fn main() {
-    let data = r#"
-var a = r"raw string\n"
-
-fun fib(a)
-  if a < 3
-    return a
-  return fib(a - 1) + fib(a - 2)
-    "#;
-
-    let mut working = r#"
-var a = r"hello" + " world"
-a
-    "#.chars();
-
-    let lexer = lexer(&mut working);
-
-    let traveler = Traveler::new(lexer.collect());
-    let mut parser = Parser::new(traveler);
-
+#[allow(dead_code)]
+fn repl() {
     let mut scopes = HashMap::new();
+    natives::apply(&mut scopes);
 
-    let stack = compiler::statements(parser.parse());
+    loop {
+        print!(">>> ");
+        io::stdout().flush().unwrap();
 
-    println!("ops =>\n{:#?}\n", stack);
+        let mut input_line = String::new();
 
-    let mut vm = Machine::new(stack);
+        match io::stdin().read_line(&mut input_line) {
+            Ok(_) => {
+                let s = input_line.trim();
 
-    println!("executed =>\n{:#?}", vm.run(&mut scopes))
+                if s == "" {
+                    continue
+                } else if s == ":quit" || s == ":q" {
+                    println!("=> bye");
+                    std::process::exit(0)
+                }
+
+                let lexer = lexer(&mut input_line.chars());
+
+                let traveler = Traveler::new(lexer.collect());
+                let mut parser = Parser::new(traveler);
+
+                let stack = compiler::statements(parser.parse());
+                let mut vm = Machine::new(stack);
+
+                vm.run(&mut scopes);
+            }
+
+            Err(e) => panic!(e),
+        }
+    }
+}
+
+fn main() {
+    repl()
 }
