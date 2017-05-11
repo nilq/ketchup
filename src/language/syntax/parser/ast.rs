@@ -1,6 +1,6 @@
 use super::super::super::Value;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expression {
     Atom(Value),
     Identifier(String),
@@ -8,14 +8,16 @@ pub enum Expression {
     Call(Box<Vec<Expression>>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Statement {
     Block(Box<Vec<Statement>>),
     Definition(String, Box<Expression>),
     Expression(Box<Expression>),
+    If(Box<Expression>, Box<Vec<Statement>>),
+    IfElse(Box<Expression>, Box<Vec<Statement>>, Box<Vec<Statement>>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Operand {
     Mul,
     Div,

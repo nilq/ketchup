@@ -8,7 +8,9 @@ use language::natives;
 use syntax::lexer;
 use syntax::parser;
 
-use lexer::lexer;
+use lexer::{process_branch, lexer};
+use lexer::block_tree;
+
 use parser::{Traveler, Parser};
 
 use vm::Machine;
@@ -57,5 +59,30 @@ fn repl() {
 }
 
 fn main() {
-    repl()
+    let mut scopes = HashMap::new();
+    natives::apply(&mut scopes);
+
+    let mut test = r#"
+var b = .12354
+if nah
+  var a = r"yes hello"
+  putsln(a, b)
+else
+  putsln("no! >:(")
+    "#;
+
+    let mut tree = block_tree::BlockTree::new(test, 0);
+    let indents  = &tree.collect_indents();
+    
+    let root = tree.tree(indents);
+
+    let lexer = process_branch(&root);
+
+    let traveler = Traveler::new(lexer);
+    let mut parser = Parser::new(traveler);
+
+    let stack = compiler::statements(parser.parse());
+    let mut vm = Machine::new(stack);
+
+    vm.run(&mut scopes);
 }

@@ -52,7 +52,25 @@ impl Parser {
                     Statement::Definition(id, Box::new(expr))
                 },
 
-                k => panic!("very non-existent keyword: {}", k),
+                "if" => {
+                    self.traveler.next();
+                    let cond = self.expression();
+                    self.traveler.next();
+
+                    let body = self.block();
+
+                    self.traveler.next();
+
+                    if self.traveler.current_content() == "else" {
+                        self.traveler.next();
+                        let else_body = self.block();
+                        Statement::IfElse(Box::new(cond), Box::new(body), Box::new(else_body))
+                    } else {
+                        Statement::If(Box::new(cond), Box::new(body))
+                    }
+                },
+
+                k => panic!("very non-existing keyword: {}", k),
             },
             _ => Statement::Expression(Box::new(self.expression())),
         }
@@ -68,6 +86,16 @@ impl Parser {
             self.traveler.prev();
         }
         expr
+    }
+
+    fn block(&mut self) -> Vec<Statement> {
+        match self.traveler.current().token_type {
+            TokenType::Block(ref v) => {
+                let mut p = Parser::new(Traveler::new(v.clone()));
+                p.parse()
+            },
+            _ => panic!("expected block, found: {}", self.traveler.current_content())
+        }
     }
 
     #[allow(unused_must_use)]

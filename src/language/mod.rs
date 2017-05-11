@@ -102,6 +102,29 @@ pub mod compiler {
                 Statement::Expression(e)    => expression(&mut script, &e),
                 Statement::Block(ve)        => script.append(&mut statements(*ve)),
                 Statement::Definition(n, e) => assignment(&mut script, &n, &*e),
+                Statement::If(cond, body)   => {
+                    expression(&mut script, &cond);
+                    let body = statements(*body);
+
+                    script.push(Op::JumpUnless(body.len() as i32 + 1));
+                    script.extend(body.iter().cloned());
+
+                    expression(&mut script, &cond)
+                },
+                Statement::IfElse(cond, body, else_body)   => {
+                    expression(&mut script, &cond);
+                    let body = statements(*body);
+
+                    script.push(Op::JumpUnless(body.len() as i32 + 1));
+                    script.extend(body.iter().cloned());
+
+                    expression(&mut script, &cond);
+
+                    let else_body = statements(*else_body);
+
+                    script.push(Op::JumpIf(else_body.len() as i32 + 1));
+                    script.extend(else_body.iter().cloned())
+                },
                 _ => panic!("unstable/unimplemented statement!?")
             }
         }
