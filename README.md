@@ -1,4 +1,4 @@
-# smoke
+# ketchup
 a programming language
 
 ## syntax
