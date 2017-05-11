@@ -87,7 +87,8 @@ impl Parser {
                         TokenType::Symbol   => match self.traveler.current_content().as_str() {
                             "(" => return self.call(expr),
                             "~" => return Expression::Call(Box::new(vec!(expr))),
-                            ")" => (),
+                              "," 
+                            | ")" => (),
                             s   => panic!("unexpected symbol: {}", s),
                         },
                         _ => (),
@@ -97,6 +98,25 @@ impl Parser {
                 self.traveler.prev();
 
                 expr
+            },
+            TokenType::Symbol => match self.traveler.current_content().as_str() {
+                "(" => {
+                    self.traveler.next();
+                    let expr = self.expression();
+                    self.traveler.next();
+
+                    self.traveler.expect_content(")");
+
+                    self.traveler.next();
+
+                    if self.traveler.current_content() == "(" {
+                        return self.call(expr)
+                    }
+
+                    self.traveler.prev();
+                    expr
+                },
+                s => panic!("very unexpected symbol: {}", s),
             },
             _ => panic!("very unexpected: '{}'", self.traveler.current_content()),
         }
