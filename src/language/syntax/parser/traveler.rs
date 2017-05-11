@@ -55,12 +55,12 @@ impl<'a> Traveler {
         if self.current().token_type == token {
             Ok(self.current())
         } else {
-            Err(format!("expected '{:?}', found '{:?}'", token, self.current()))
+            Err(format!("expected '{:?}', found '{:?}'", token, self.current_content()))
         }
     }
 
-    pub fn expect_content(&self, content: String) -> Result<&Token, String> {
-        if self.current_content() == content {
+    pub fn expect_content(&self, content: &str) -> Result<&Token, String> {
+        if &self.current_content() == content {
             Ok(self.current())
         } else {
             Err(format!("expected '{}', found '{:#?}'", content, self.current()))

@@ -5,7 +5,7 @@ a programming language
 
 ```
 # v constant here
-imm a = r"raw string\n"
+var a = r"raw string\n"
 
 fun fib(a)
   if a < 3
@@ -15,7 +15,7 @@ fun fib(a)
 fun apply(a, f) -> return f(a)
 
 # v weak non-constant 
-mut foo?! = 'c' # char bb
+var foo?! = 'c' # char bb
 
 foo = apply(10, fun(x) -> return 2 * x)
 
@@ -25,12 +25,12 @@ fib(foo)
 sexy af syntax
 
 ```
-mut a =
+var a =
   1 + 100 * (.123) / 0xDEDEDE
 
 # ... should get hex at some point ^
 
-imm function =
+var function =
   fun
     return r"lol this is totally a thing"
 

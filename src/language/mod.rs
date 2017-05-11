@@ -4,7 +4,7 @@ pub mod vm;
 pub use vm::Value;
 
 pub mod compiler {
-    use vm::Op;
+    use vm::{Op, Value};
     use syntax::parser::{Expression, Statement, Operand};
 
     pub fn expression(script: &mut Vec<Op>, expr: &Expression) {
@@ -26,8 +26,16 @@ pub mod compiler {
                     Operand::GtEquals => script.push(Op::GtEquals),
                 }
             },
+            Expression::Identifier(ref n) => script.push(Op::Name(n.clone())),
             _ => panic!("unimplemented expression!") ,
         }
+    }
+
+    fn assignment(script: &mut Vec<Op>, name: &str, expr: &Expression) {
+        expression(script, expr);
+
+        script.push(Op::Value(Value::StringLiteral(name.to_owned())));
+        script.push(Op::Define)
     }
 
     pub fn statements(stream: Vec<Statement>) -> Vec<Op> {
@@ -35,8 +43,10 @@ pub mod compiler {
 
         for s in stream {
             match s {
-                Statement::Expression(e) => expression(&mut script, &e),
-                Statement::Block(ve)     => script.append(&mut statements(*ve)),
+                Statement::Expression(e)   => expression(&mut script, &e),
+                Statement::Block(ve)       => script.append(&mut statements(*ve)),
+                Statement::Immutable(n, e) => assignment(&mut script, &n, &*e),
+                _ => panic!("unstable/unimplemented statement!?")
             }
         }
 

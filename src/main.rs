@@ -16,7 +16,7 @@ use std::collections::HashMap;
 
 fn main() {
     let data = r#"
-imm a = r"raw string\n"
+var a = r"raw string\n"
 
 fun fib(a)
   if a < 3
@@ -25,7 +25,8 @@ fun fib(a)
     "#;
 
     let mut working = r#"
-1 + 10 * 10.2 - .2
+var a = r"hello" + " world"
+a
     "#.chars();
 
     let lexer = lexer(&mut working);

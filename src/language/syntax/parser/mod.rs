@@ -35,6 +35,27 @@ impl Parser {
     #[allow(unused_must_use)]
     fn statement(&mut self) -> Statement {
         match self.traveler.current().token_type {
+            TokenType::Keyword => match self.traveler.current_content().as_str() {
+                "var" => {
+                    self.traveler.next();
+                    self.traveler.expect(TokenType::Identifier);
+
+                    let id = self.traveler.current_content();
+
+                    self.traveler.next();
+
+                    self.traveler.expect_content("=");
+                    self.traveler.next();
+
+                    let expr = self.expression();
+
+                    println!("var {} = {:?}", id, expr);
+
+                    Statement::Immutable(id, Box::new(expr))
+                },
+
+                k => panic!("very non-existent keyword: {}", k),
+            },
             _ => Statement::Expression(Box::new(self.expression())),
         }
     }
@@ -42,15 +63,12 @@ impl Parser {
     fn expression(&mut self) -> Expression {
         let expr = self.atom();
         self.traveler.next();
-
         if self.traveler.remaining() > 0 {
             if self.traveler.current().token_type == TokenType::Operator {
                 return self.operation(expr)
             }
-
             self.traveler.prev();
         }
-
         expr
     }
 

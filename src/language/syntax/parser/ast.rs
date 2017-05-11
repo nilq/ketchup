@@ -10,6 +10,8 @@ pub enum Expression {
 #[derive(Debug)]
 pub enum Statement {
     Block(Box<Vec<Statement>>),
+    Immutable(String, Box<Expression>),
+    Mutable(String, Box<Expression>),
     Expression(Box<Expression>),
 }
 
