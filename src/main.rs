@@ -64,11 +64,14 @@ fn main() {
 
     let mut test = r#"
 var b = .12354
-if nah
-  var a = r"yes hello"
-  putsln(a, b)
-else
-  putsln("no! >:(")
+
+# xd this is true
+if "hey"
+  if nah
+    var a = r"yes hello"
+    putsln(a, b)
+  else
+    putsln("no! >:(")
     "#;
 
     let mut tree = block_tree::BlockTree::new(test, 0);
