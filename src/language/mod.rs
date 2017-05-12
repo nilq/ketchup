@@ -103,6 +103,14 @@ pub mod compiler {
                     None => (),
                 }
             },
+            Expression::Return(ref e) => {
+                match e.clone() {
+                    Some(e) => expression(script, &*e),
+                    None    => script.push(Op::Value(Value::Nil)),
+                }
+
+                script.push(Op::Return)
+            },
             _ => panic!("unimplemented expression!") ,
         }
     }

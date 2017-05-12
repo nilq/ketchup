@@ -7,8 +7,9 @@ pub enum Expression {
     Operation(Box<Expression>, Operand, Box<Expression>),
     Call(Box<Vec<Expression>>),
     Function(Function),
+    Return(Option<Box<Expression>>),
 }
-
+ 
 #[derive(Debug, Clone)]
 pub enum Statement {
     Block(Box<Vec<Statement>>),
@@ -17,7 +18,6 @@ pub enum Statement {
     Assignment(String, Box<Expression>),
     If(Box<Expression>, Box<Vec<Statement>>),
     IfElse(Box<Expression>, Box<Vec<Statement>>, Box<Vec<Statement>>),
-    Return(Box<Expression>),
 }
 
 #[derive(Debug, Clone)]

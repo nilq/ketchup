@@ -25,6 +25,7 @@ impl Value {
             (&Value::StringLiteral(ref a), Value::StringLiteral(ref b)) => Value::StringLiteral(a.clone() + b.as_str()),
             (&Value::StringLiteral(ref a), Value::CharLiteral(ref b))   => Value::StringLiteral(a.clone() + &b.to_string()),
             (&Value::CharLiteral(a),   Value::CharLiteral(b))           => Value::StringLiteral(format!("{}{}", a, b)),
+            (&Value::CharLiteral(a),   Value::StringLiteral(b))         => Value::StringLiteral(format!("{}{}", a, b)),
 
             _ => return Err("invalid operation".to_owned())
         })

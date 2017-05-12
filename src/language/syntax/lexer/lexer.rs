@@ -47,7 +47,7 @@ pub fn lexer(data: &mut Chars) -> Lexer {
         "and",
         "if",
         "else",
-        "elif"
+        "return",
     ].iter().map(|&x| x.to_string()).collect();
 
     let boolean = vec![

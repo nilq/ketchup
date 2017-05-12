@@ -85,7 +85,7 @@ impl Parser {
                     }
                 },
 
-                "fun" => Statement::Expression(Box::new(self.expression())),
+                "fun" | "return" | "kill" => Statement::Expression(Box::new(self.expression())),
 
                 k => panic!("very non-existing keyword: {}", k),
             },
@@ -208,6 +208,15 @@ impl Parser {
                     }
 
                     Expression::Function(Function::new(name, args, body))
+                },
+
+                "return" => {
+                    self.traveler.next();
+                    if self.traveler.current_content() == "~" {
+                        Expression::Return(None)
+                    } else {
+                        Expression::Return(Some(Box::new(self.expression())))
+                    }
                 },
 
                 _ => panic!("unexpected keyword: {}", self.traveler.current_content()),
