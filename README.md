@@ -1,39 +1,109 @@
 # ketchup
-a programming language
+a programming language without even the slightest implementation of any form of memory management.
 
-## syntax
+## guide
 
+comments
 ```
-# v constant here
-var a = r"raw string\n"
+# this is a comment
+# this is also a comment
+# this is the only type of comment there is
+# xd
+```
 
+literals
+```
+# string literals
+r"raw string .. escapes are ignored"
+"regular string"
+
+# char literal
+'a'
+'\n'
+
+# number stuff
+1234
+.123
+-0.123
+-321
+
+# bool
+yes # is hipster version of true
+nah
+```
+
+data management
+```
+var foo = r"yes hello\n"
+foo = 123 # dynamic!?
+
+# nice identifiers
+# regular assignments should literally be same as 'var' idk
+hey?  = 'n'
+hey!? = 'i'
+hey!  = 'c'
+_hey  = 'e'
+_h3y? = "!?!1"
+```
+
+functions
+```
+# warning: recursion WILL cause overflow
 fun fib(a)
   if a < 3
     return a
-  return fib(a - 1) + fib(a - 2)
   
-fun apply(a, f) -> return f(a)
+  # forcing copied memory?
+  var a1 = a - 1
+  var a2 = a - 2
 
-# v weak non-constant 
-var foo?! = 'c' # char bb
+  return fib(a1) + fib(a2)
 
-foo = apply(10, fun(x) -> return 2 * x)
-
-fib(foo)
+putsln(fib(5)) # => 5
 ```
 
-sexy af syntax
+'~' and '()' is the same .. except for `return~` ...
+```
+fun test
+putsln(test~) # => nil
+putsln(test()) # => nil
+
+fun test2 return~
+putsln(test2~) # => nil
+
+fun test3(a, b)
+putsln(test3(1, 2)) # => nil
+
+functional
+```
+
+functional
+```
+fun add(a, b)
+  return a + b
+
+fun sub(a, b) return a - b
+
+fun mul(a, b)
+  c = a * b
+  return c
+
+# higher order stuff
+fun apply(f, a, b) return f(a, b)
+
+putsln(apply(add, 1, 2)) # => 3
+putsln(apply(sub, 1, 2)) # => -1
+putsln(apply(mul, 1, 2)) # => 2
+```
+
+conditionals
 
 ```
-var a =
-  1 + 100 * (.123) / 0xDEDEDE
+if yes
+  putsln("hey")
+else
+  angry("this will never happen") # angry *panics*
 
-# ... should get hex at some point ^
-
-var function =
-  fun
-    return r"lol this is totally a thing"
-
-# '~' for doing '()'
-print(function~) # stdout => 'lol this is totally a thing'
+# will print
+if "strings are truthy" puts r"so this will print" else angry("this won't happen")
 ```
