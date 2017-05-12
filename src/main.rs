@@ -63,9 +63,15 @@ fn test() {
     natives::apply(&mut scopes);
 
     let mut test = r#"
-fun test() putsln(r"hey")
+fun fib(a)
+  if a < 3
+    return a
+  else
+    other_a?  = a - 1
+    other_a2? = a - 2
+    return fib(other_a?) + fib(other_a2?)
 
-test()
+putsln(fib(5))
     "#;
 
     let mut tree = block_tree::BlockTree::new(test, 0);

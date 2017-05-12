@@ -71,13 +71,21 @@ impl Parser {
                     let cond = self.expression();
                     self.traveler.next();
 
-                    let body = self.block();
+                    let body = match self.traveler.current().token_type {
+                        TokenType::Block(_) => self.block(),
+                        _ => vec!(Statement::Expression(Box::new(self.expression()))),
+                    };
 
                     self.traveler.next();
 
                     if self.traveler.current_content() == "else" {
                         self.traveler.next();
-                        let else_body = self.block();
+
+                        let else_body = match self.traveler.current().token_type {
+                            TokenType::Block(_) => self.block(),
+                            _ => vec!(Statement::Expression(Box::new(self.expression()))),
+                        };
+
                         Statement::IfElse(Box::new(cond), Box::new(body), Box::new(else_body))
                     } else {
                         self.traveler.prev();
