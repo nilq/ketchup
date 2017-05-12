@@ -63,13 +63,9 @@ fn test() {
     natives::apply(&mut scopes);
 
     let mut test = r#"
-var s = 0
+fun test() putsln(r"hey")
 
-fun add(a, b)
-  s = a + b
-
-add(10, 10)
-puts("heyn", s)
+test()
     "#;
 
     let mut tree = block_tree::BlockTree::new(test, 0);
@@ -91,5 +87,5 @@ puts("heyn", s)
 }
 
 fn main() {
-    test()
+    repl()
 }

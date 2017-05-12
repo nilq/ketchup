@@ -199,12 +199,12 @@ impl Parser {
                                     TokenType::Block(_) => {
                                         body = Some(self.block());
                                     },
-                                    _ => body = None,
+                                    _ => body = Some(vec!(Statement::Expression(Box::new(self.expression())))),
                                 }
                             },
                             _ => panic!("unexpected symbol: {}", self.traveler.current_content()),
                         },
-                        t => panic!("unexpected token: {}", self.traveler.current_content()),
+                        t => body = Some(vec!(Statement::Expression(Box::new(self.expression())))),
                     }
 
                     Expression::Function(Function::new(name, args, body))
