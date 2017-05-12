@@ -14,6 +14,7 @@ pub enum Statement {
     Block(Box<Vec<Statement>>),
     Definition(String, Box<Expression>),
     Expression(Box<Expression>),
+    Assignment(String, Box<Expression>),
     If(Box<Expression>, Box<Vec<Statement>>),
     IfElse(Box<Expression>, Box<Vec<Statement>>, Box<Vec<Statement>>),
     Return(Box<Expression>),

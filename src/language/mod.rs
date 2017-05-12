@@ -145,6 +145,7 @@ pub mod compiler {
                     script.push(Op::JumpIf(else_body.len() as i32 + 1));
                     script.extend(else_body.iter().cloned())
                 },
+                Statement::Assignment(ref id, ref expr) => assignment(&mut script, &id, &*expr),
                 _ => panic!("unstable/unimplemented statement!?")
             }
         }

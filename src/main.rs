@@ -63,8 +63,13 @@ fn test() {
     natives::apply(&mut scopes);
 
     let mut test = r#"
-fun sub
-  putsln("hey")
+var s = 0
+
+fun add(a, b)
+  s = a + b
+
+add(10, 10)
+puts("heyn", s)
     "#;
 
     let mut tree = block_tree::BlockTree::new(test, 0);
@@ -77,7 +82,9 @@ fun sub
     let traveler = Traveler::new(lexer);
     let mut parser = Parser::new(traveler);
 
-    let stack = compiler::statements(parser.parse());
+    let p = parser.parse();
+
+    let stack = compiler::statements(p);
     let mut vm = Machine::new(stack);
 
     vm.run(&mut scopes);

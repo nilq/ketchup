@@ -35,6 +35,20 @@ impl Parser {
     #[allow(unused_must_use)]
     fn statement(&mut self) -> Statement {
         match self.traveler.current().token_type {
+            TokenType::Identifier => {
+                let id = self.traveler.current_content();
+                self.traveler.next();
+                match self.traveler.current_content().as_str() {
+                    "=" => {
+                        self.traveler.next();
+                        Statement::Assignment(id, Box::new(self.expression()))
+                    },
+                    _   => {
+                        self.traveler.prev();
+                        Statement::Expression(Box::new(self.expression()))
+                    },
+                }
+            },
             TokenType::Keyword => match self.traveler.current_content().as_str() {
                 "var" => {
                     self.traveler.next();
@@ -184,7 +198,6 @@ impl Parser {
                                 match self.traveler.current().token_type {
                                     TokenType::Block(_) => {
                                         body = Some(self.block());
-                                        self.traveler.next();
                                     },
                                     _ => body = None,
                                 }
@@ -224,8 +237,6 @@ impl Parser {
     fn operation(&mut self, expression: Expression) -> Expression {
         let mut ex_stack = vec![expression];
         let mut op_stack: Vec<(Operand, u8)> = Vec::new();
-
-        println!("current: {}", self.traveler.current_content());
 
         op_stack.push(operand(&self.traveler.current_content()).unwrap());
 
