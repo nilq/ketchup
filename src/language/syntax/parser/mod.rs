@@ -3,7 +3,7 @@ use super::super::Value;
 pub mod traveler;
 pub mod ast;
 
-pub use self::ast::{Expression, Statement, Operand, operand};
+pub use self::ast::{Expression, Statement, Function, Operand, operand};
 pub use self::traveler::Traveler;
 
 pub use super::lexer;
@@ -71,6 +71,8 @@ impl Parser {
                     }
                 },
 
+                "fun" => Statement::Expression(Box::new(self.expression())),
+
                 k => panic!("very non-existing keyword: {}", k),
             },
             _ => Statement::Expression(Box::new(self.expression())),
@@ -116,7 +118,7 @@ impl Parser {
                         TokenType::Symbol   => match self.traveler.current_content().as_str() {
                             "(" => return self.call(expr),
                             "~" => return Expression::Call(Box::new(vec!(expr))),
-                              "," 
+                              ","
                             | ")" => (),
                             s   => panic!("unexpected symbol: {}", s),
                         },
@@ -146,6 +148,56 @@ impl Parser {
                     expr
                 },
                 s => panic!("very unexpected symbol: {}", s),
+            },
+            TokenType::Keyword => match self.traveler.current_content().as_str() {
+                "fun" => {
+                    self.traveler.next();
+                    let name: Option<String>;
+
+                    if self.traveler.current().token_type == TokenType::Identifier {
+                        name = Some(self.traveler.current_content());
+                        self.traveler.next();
+                    } else {
+                        name = None
+                    }
+
+                    let mut body: Option<Vec<Statement>> = None;
+
+                    let mut args = Vec::new();
+
+                    match self.traveler.current().token_type.clone() {
+                        TokenType::Block(_) => body = Some(self.block()),
+                        TokenType::Symbol   => match self.traveler.current_content().as_str() {
+                            "(" => {
+                                self.traveler.next();
+                                while self.traveler.current().token_type == TokenType::Identifier {
+                                    args.push(self.traveler.current_content());
+                                    self.traveler.next();
+
+                                    if self.traveler.current_content() == "," {
+                                        self.traveler.next();
+                                    }
+                                }
+                                self.traveler.expect_content(")");
+                                self.traveler.next();
+
+                                match self.traveler.current().token_type {
+                                    TokenType::Block(_) => {
+                                        body = Some(self.block());
+                                        self.traveler.next();
+                                    },
+                                    _ => body = None,
+                                }
+                            },
+                            _ => panic!("unexpected symbol: {}", self.traveler.current_content()),
+                        },
+                        t => panic!("unexpected token: {}", self.traveler.current_content()),
+                    }
+
+                    Expression::Function(Function::new(name, args, body))
+                },
+
+                _ => panic!("unexpected keyword: {}", self.traveler.current_content()),
             },
             _ => panic!("very unexpected: '{}'", self.traveler.current_content()),
         }

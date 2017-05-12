@@ -52,8 +52,8 @@ pub mod natives {
 }
 
 pub mod compiler {
-    use vm::{Op, Value};
-    use syntax::parser::{Expression, Statement, Operand};
+    use vm::{Op, Value, Object};
+    use syntax::parser::{Expression, Statement, Operand, Function};
 
     pub fn expression(script: &mut Vec<Op>, expr: &Expression) {
         match *expr {
@@ -82,7 +82,27 @@ pub mod compiler {
 
                 script.push(Op::Value(Value::IntLiteral((args.len() as i64) - 1)));
                 script.push(Op::Call)
-            }
+            },
+            Expression::Function(Function {ref name, ref args, ref body}) => {
+                let body = match body {
+                    &Some(ref b) => statements(b.clone()),
+                    &None    => vec!(Op::Value(Value::Nil)), // xd this is good haha
+                };
+                let obj  = Object::Function {
+                    args: args.clone(),
+                    body,
+                };
+
+                script.push(Op::Value(Value::Object(obj)));
+
+                match *name {
+                    Some(ref n) => {
+                        script.push(Op::Value(Value::StringLiteral(n.clone())));
+                        script.push(Op::Define)
+                    },
+                    None => (),
+                }
+            },
             _ => panic!("unimplemented expression!") ,
         }
     }

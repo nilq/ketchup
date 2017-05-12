@@ -6,6 +6,7 @@ pub enum Expression {
     Identifier(String),
     Operation(Box<Expression>, Operand, Box<Expression>),
     Call(Box<Vec<Expression>>),
+    Function(Function),
 }
 
 #[derive(Debug, Clone)]
@@ -15,6 +16,22 @@ pub enum Statement {
     Expression(Box<Expression>),
     If(Box<Expression>, Box<Vec<Statement>>),
     IfElse(Box<Expression>, Box<Vec<Statement>>, Box<Vec<Statement>>),
+    Return(Box<Expression>),
+}
+
+#[derive(Debug, Clone)]
+pub struct Function {
+    pub name: Option<String>,
+    pub args: Vec<String>,
+    pub body: Option<Vec<Statement>>,
+}
+
+impl Function {
+    pub fn new(name: Option<String>, args: Vec<String>, body: Option<Vec<Statement>>) -> Function {
+        Function {
+            name, args, body,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]

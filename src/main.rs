@@ -63,26 +63,8 @@ fn test() {
     natives::apply(&mut scopes);
 
     let mut test = r#"
-var a = r"raw string"
-var b = "normal string"
-var c = '\n'
-
-var i = 123
-var f = .123
-
-puts(a, b, c) # => "raw string normal string \n"
-putsln~       # calls func without args
-
-# strings are truthy
-if "yes hello"
-  if nah # 'nah' is boolean false
-    var a = r"yes hello"
-    putsln(a, b)
-  else
-    putsln("no! >:(")
-
-var f = .123
-putsln(f)
+fun sub
+  putsln("hey")
     "#;
 
     let mut tree = block_tree::BlockTree::new(test, 0);
