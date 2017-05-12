@@ -121,8 +121,8 @@ impl Machine {
                             }
                         },
                         s => {
-                            println!("found '{}' on stack", s);
-                            return Err("very invalid and broken call!".to_owned());
+                            println!("found '{}' on stack: {:#?}", s, self.stack);
+                            panic!("very invalid and broken call")
                         },
                     }
                 },

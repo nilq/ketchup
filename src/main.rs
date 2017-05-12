@@ -58,20 +58,31 @@ fn repl() {
     }
 }
 
-fn main() {
+fn test() {
     let mut scopes = HashMap::new();
     natives::apply(&mut scopes);
 
     let mut test = r#"
-var b = .12354
+var a = r"raw string"
+var b = "normal string"
+var c = '\n'
 
-# xd this is true
-if "hey"
-  if nah
+var i = 123
+var f = .123
+
+puts(a, b, c) # => "raw string normal string \n"
+putsln~       # calls func without args
+
+# strings are truthy
+if "yes hello"
+  if nah # 'nah' is boolean false
     var a = r"yes hello"
     putsln(a, b)
   else
     putsln("no! >:(")
+
+var f = .123
+putsln(f)
     "#;
 
     let mut tree = block_tree::BlockTree::new(test, 0);
@@ -88,4 +99,8 @@ if "hey"
     let mut vm = Machine::new(stack);
 
     vm.run(&mut scopes);
+}
+
+fn main() {
+    test()
 }

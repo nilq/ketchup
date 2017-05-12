@@ -66,6 +66,7 @@ impl Parser {
                         let else_body = self.block();
                         Statement::IfElse(Box::new(cond), Box::new(body), Box::new(else_body))
                     } else {
+                        self.traveler.prev();
                         Statement::If(Box::new(cond), Box::new(body))
                     }
                 },
@@ -171,6 +172,8 @@ impl Parser {
     fn operation(&mut self, expression: Expression) -> Expression {
         let mut ex_stack = vec![expression];
         let mut op_stack: Vec<(Operand, u8)> = Vec::new();
+
+        println!("current: {}", self.traveler.current_content());
 
         op_stack.push(operand(&self.traveler.current_content()).unwrap());
 
